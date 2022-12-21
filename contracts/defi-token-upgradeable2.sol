@@ -13,7 +13,7 @@ import "hardhat/console.sol";
 contract ldgDefiUpgradeable2 is ERC20Upgradeable, ERC20BurnableUpgradeable, PausableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
     
     bytes32 public constant MINT_ROLE = keccak256("MINT_ROLE"); // MINT ROLE TO CALL mint in different smart contract
-    uint32 public APY = 50; // revenue in % per year that would be generated in token ( 3 decimals ) example : 50 = 0.05 = 5%
+    uint32 public APY; // revenue in % per year that would be generated in token ( 3 decimals ) example : 50 = 0.05 = 5%
     mapping (address => uint256) private lastUpdateInterest; // When is the last time was updated the timestamp of his token
     address[] internal userAddr; // We will store all address to update the mapping of lastUpdateInterest
 

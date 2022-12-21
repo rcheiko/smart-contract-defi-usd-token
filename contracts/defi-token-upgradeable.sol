@@ -22,6 +22,7 @@ contract ldgDefiUpgradeable is Initializable, ERC20Upgradeable, ERC20BurnableUpg
         __ERC20Burnable_init();
         __Pausable_init();
         __AccessControl_init();
+        updateBalance(msg.sender);
         _mint(msg.sender, 100 * 10 ** 18);
         APY = 50;
     }
@@ -50,7 +51,6 @@ contract ldgDefiUpgradeable is Initializable, ERC20Upgradeable, ERC20BurnableUpg
      * @param _apy the APY with 3 decimals
      **/
     function setAPY(uint16 _apy) external onlyOwner {
-        // need to updateBalance of all user
         for (uint256 i = 0; i < userAddr.length; i++) {
             updateBalance(userAddr[i]);
         }
@@ -79,6 +79,9 @@ contract ldgDefiUpgradeable is Initializable, ERC20Upgradeable, ERC20BurnableUpg
      * @param _user the address from wich you want to see the balance
      **/
     function PercentageTimeStakingBeforeLastUpdate(address _user) internal view returns(uint256) {
+        if (lastUpdateInterest[_user] == 0) {
+            return 0;
+        }
         uint256 diffResult = (block.timestamp - lastUpdateInterest[_user]); // Difference between date.now() - lastUpdate of the user
         return ((diffResult * 10 ** 18) / 365 days); // The percentage of the time staking in 1 year, example : if is stacked 1 year exactly he will have 1 ( 100 % )
     }
@@ -94,7 +97,8 @@ contract ldgDefiUpgradeable is Initializable, ERC20Upgradeable, ERC20BurnableUpg
             return 0;
         }
 
-        uint PercentageTimeStaking = PercentageTimeStakingBeforeLastUpdate(_user);
+        uint256 PercentageTimeStaking = PercentageTimeStakingBeforeLastUpdate(_user);
+
         return (((currentPrincipalBalance * PercentageTimeStaking) * APY / 10 ** 21) + currentPrincipalBalance); // interest accumulate + currentBalance ( 21 = 18 decimals + 3 APY decimals )
     }
 
