@@ -2,7 +2,7 @@ COMPILE SMART CONTRACT :
 - yarn hardhat compile
 
 DEPLOY THE CONTRACT :
-- npx hardhat run scripts/deploy.js --network polygon_mumbai
+- npx hardhat run scripts/deploy.js --network goerli
 
 TEST THE CONTRACT :
 - npx hardhat test

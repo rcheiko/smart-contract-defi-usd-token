@@ -10,34 +10,20 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "hardhat/console.sol";
 
-contract ldgDefiUpgradeable is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, PausableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
-    // constructor() ERC20("ldgDefi", "LDG01") {
-    //     updateBalance(msg.sender);
-    //     _mint(msg.sender, 100 * 10 ** 18);
-    // }
-
-    function initialize() external initializer {
-        __ERC20_init("LDG01", "LDG01");
-        __Ownable_init();
-        __ERC20Burnable_init();
-        __Pausable_init();
-        __AccessControl_init();
-        _mint(msg.sender, 100 * 10 ** 18);
-        APY = 50;
-    }
+contract ldgDefiUpgradeable2 is ERC20Upgradeable, ERC20BurnableUpgradeable, PausableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
     
     bytes32 public constant MINT_ROLE = keccak256("MINT_ROLE"); // MINT ROLE TO CALL mint in different smart contract
-    uint32 public APY; // revenue in % per year that would be generated in token ( 3 decimals ) example : 50 = 0.05 = 5%
+    uint32 public APY = 50; // revenue in % per year that would be generated in token ( 3 decimals ) example : 50 = 0.05 = 5%
     mapping (address => uint256) private lastUpdateInterest; // When is the last time was updated the timestamp of his token
     address[] internal userAddr; // We will store all address to update the mapping of lastUpdateInterest
 
-    // function pause() public onlyOwner {
-    //     _pause();
-    // }
+    function pause() public onlyOwner {
+        _pause();
+    }
 
-    // function unpause() public onlyOwner {
-    //     _unpause();
-    // }
+    function unpause() public onlyOwner {
+        _unpause();
+    }
 
     function mint(address to, uint256 amount) public onlyRole(MINT_ROLE) {
         require(hasRole(MINT_ROLE, msg.sender));
