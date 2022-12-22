@@ -10,22 +10,47 @@ import "./defi-token-upgradeable.sol";
 
 import "hardhat/console.sol";
 
-contract ldgDefiUpgradeable is Initializable, PausableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
-        function initialize() external initializer {
+contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
+
+    function initialize() external initializer {
         __Ownable_init();
         __Pausable_init();
         __AccessControl_init();
+        token = LDG01(0x358AA13c52544ECCEF6B0ADD0f801012ADAD5eE3);
+        tokenAddress = address(0x358AA13c52544ECCEF6B0ADD0f801012ADAD5eE3);
+        token_usd = IERC20Upgradeable(0xDA0bab807633f07f013f94DD0E6A4F96F8742B53);
+        USDAddress = address(0xDA0bab807633f07f013f94DD0E6A4F96F8742B53);
+        fundWallet= address(0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2);
     }
-    address tokenAddress = address(0x0); // LDG TOKEN ADDRESS
-    address USDAddress = address(0x0); // USD ADDRESS
-    address fundWallet = address(0x0); // Fund Wallet
+    address tokenAddress; // LDG TOKEN ADDRESS
+    address USDAddress; // USD ADDRESS
+    address fundWallet; // Fund Wallet
 
     IERC20Upgradeable token_usd;  // USD TOKEN
     LDG01 token; // LDG TOKEN
 
     uint256 balance; // USD balance
+    uint8 public usd_decimal = 6;
 
-    // ###### SET FUNCTIONS ######
+
+    modifier isTokenSet() { // Check is all the address has been correctly set
+        require(USDAddress != address(0x0), "USD Token address cannot be 0x0.");
+        require(tokenAddress != address(0x0), "Token LDG address cannot be 0x0.");
+        require(fundWallet != address(0x0), "Fund Wallet address cannot be 0x0.");
+        _;
+    }
+
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
+    /**
+     *  SET FUNCTIONS
+     **/
 
     function setToken(address _token) external onlyOwner { // SET LDG TOKEN
         token = LDG01(_token);
@@ -40,12 +65,42 @@ contract ldgDefiUpgradeable is Initializable, PausableUpgradeable, OwnableUpgrad
     function setFundWallet(address _wallet) external onlyOwner { // SET FUND WALLET
         fundWallet = address(_wallet);
     }
+
+        function setUsdDecimal(uint8 decimal) external onlyOwner { // SET USD DECIMAL
+        usd_decimal = decimal;
+    }
     
-    function getAmountUSD(uint256 _amount) public pure returns(uint256) {
-        return _amount / (10 ** 12);
+    function getAmountUSD(uint256 amount) public view returns(uint256) {
+        return amount / (10 ** 18 - usd_decimal);
     }
 
-    function getAmountLty(uint256 _amount) public pure returns(uint256) {
-        return _amount * (10 ** 12);
+    function getAmountLTY(uint256 amount) public view returns(uint256) {
+        return amount * (10 ** 18 - usd_decimal);
+    }
+
+    /**
+     *  SWAP FUNCTIONS
+     **/
+
+    /**
+     * @dev It will give you equivalent amount of LTY Token for 1 USD / 1 LTY01
+     * @param amount total usd you want to deposit
+     **/
+    function deposit(uint256 amount) external isTokenSet whenNotPaused {
+        require(token_usd.balanceOf(msg.sender) >= amount, "You need to have enough USD in your balance");
+
+        uint256 amountLTY = getAmountLTY(amount); // Amout LTY bought with the USD of the user
+        bool res = token_usd.transferFrom(msg.sender, fundWallet, amount); // transfer all the USD in the fund Wallet
+        require(res, "The Transfer has been failed, please try again.");
+
+        token.mint(msg.sender, amountLTY);   // Token LDG minted and gived to the users
+    }
+
+    /**
+     * @dev It will give you equivalent amount of USDC for 1 LTY01 / 1 USD
+     * @param amount total lty token you want to withdraw
+     **/
+    function withdraw(uint256 amount) external isTokenSet whenNotPaused {
+
     }
 }
