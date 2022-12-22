@@ -2,7 +2,10 @@ COMPILE SMART CONTRACT :
 - yarn hardhat compile
 
 DEPLOY THE CONTRACT :
-- npx hardhat run scripts/deploy.js --network goerli
+- npx hardhat run scripts/deploy.ts --network goerli
 
 TEST THE CONTRACT :
 - npx hardhat test
+
+VERIFY THE CONTRACT :
+- npx hardhat verify --network goerli <address>

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
@@ -10,11 +10,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "hardhat/console.sol";
 
-contract ldgDefiUpgradeable is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, PausableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
-    // constructor() ERC20("ldgDefi", "LDG01") {
-    //     updateBalance(msg.sender);
-    //     _mint(msg.sender, 100 * 10 ** 18);
-    // }
+contract LDG01 is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, PausableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
 
     function initialize() external initializer {
         __ERC20_init("LDG01", "LDG01");
@@ -22,25 +18,26 @@ contract ldgDefiUpgradeable is Initializable, ERC20Upgradeable, ERC20BurnableUpg
         __ERC20Burnable_init();
         __Pausable_init();
         __AccessControl_init();
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         updateBalance(msg.sender);
         _mint(msg.sender, 100 * 10 ** 18);
         APY = 50;
     }
     
     bytes32 public constant MINT_ROLE = keccak256("MINT_ROLE"); // MINT ROLE TO CALL mint in different smart contract
-    uint32 public APY; // revenue in % per year that would be generated in token ( 3 decimals ) example : 50 = 0.05 = 5%
-    mapping (address => uint256) private lastUpdateInterest; // When is the last time was updated the timestamp of his token
+    uint32 internal APY; // revenue in % per year that would be generated in token ( 3 decimals ) example : 50 = 0.05 = 5%
+    mapping (address => uint256) internal lastUpdateInterest; // When is the last time was updated the timestamp of his token
     address[] internal userAddr; // We will store all address to update the mapping of lastUpdateInterest
 
-    // function pause() public onlyOwner {
-    //     _pause();
-    // }
+    function pause() public onlyOwner {
+        _pause();
+    }
 
-    // function unpause() public onlyOwner {
-    //     _unpause();
-    // }
+    function unpause() public onlyOwner {
+        _unpause();
+    }
 
-    function mint(address to, uint256 amount) public onlyRole(MINT_ROLE) {
+    function mint(address to, uint256 amount) public onlyRole(MINT_ROLE) whenNotPaused {
         require(hasRole(MINT_ROLE, msg.sender));
         updateBalance(to);
         _mint(to, amount);
@@ -61,7 +58,7 @@ contract ldgDefiUpgradeable is Initializable, ERC20Upgradeable, ERC20BurnableUpg
      * @dev The contract will calculate your benefit and mint for you the benefit in your account
      * @param _user the address from wich you want to update the balance
      **/
-    function updateBalance(address _user) public {
+    function updateBalance(address _user) internal {
         uint256 previousPrincipalBalance = super.balanceOf(_user);
         uint256 balanceIncrease = balanceOf(_user) - previousPrincipalBalance;
         if (lastUpdateInterest[_user] == 0) {
