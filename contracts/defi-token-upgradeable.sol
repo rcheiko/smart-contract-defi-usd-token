@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.11;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
@@ -19,8 +19,8 @@ contract LDG01 is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, Pau
         __Pausable_init();
         __AccessControl_init();
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        updateBalance(msg.sender);
-        _mint(msg.sender, 100 * 10 ** 18);
+        // updateBalance(msg.sender);
+        // _mint(msg.sender, 100 * 10 ** 18);
         APY = 50;
     }
     
@@ -134,4 +134,3 @@ contract LDG01 is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, Pau
         super._beforeTokenTransfer(from, to, amount);
     }
 }
-

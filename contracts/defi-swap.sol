@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.11;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
@@ -16,11 +16,11 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable, Acce
         __Ownable_init();
         __Pausable_init();
         __AccessControl_init();
-        token = LDG01(0x358AA13c52544ECCEF6B0ADD0f801012ADAD5eE3);
-        tokenAddress = address(0x358AA13c52544ECCEF6B0ADD0f801012ADAD5eE3);
-        token_usd = IERC20Upgradeable(0xDA0bab807633f07f013f94DD0E6A4F96F8742B53);
-        USDAddress = address(0xDA0bab807633f07f013f94DD0E6A4F96F8742B53);
-        fundWallet= address(0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2);
+        // token = LDG01(0x358AA13c52544ECCEF6B0ADD0f801012ADAD5eE3);
+        // tokenAddress = address(0x358AA13c52544ECCEF6B0ADD0f801012ADAD5eE3);
+        // token_usd = IERC20Upgradeable(0xDA0bab807633f07f013f94DD0E6A4F96F8742B53);
+        // USDAddress = address(0xDA0bab807633f07f013f94DD0E6A4F96F8742B53);
+        // fundWallet= address(0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2);
     }
     address tokenAddress; // LDG TOKEN ADDRESS
     address USDAddress; // USD ADDRESS
@@ -30,7 +30,7 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable, Acce
     LDG01 token; // LDG TOKEN
 
     uint256 balance; // USD balance
-    uint8 public usd_decimal = 6;
+    uint8 public usd_decimal = 6; // Decimal of USD Token
 
 
     modifier isTokenSet() { // Check is all the address has been correctly set
@@ -69,7 +69,7 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable, Acce
         function setUsdDecimal(uint8 decimal) external onlyOwner { // SET USD DECIMAL
         usd_decimal = decimal;
     }
-    
+
     function getAmountUSD(uint256 amount) public view returns(uint256) {
         return amount / (10 ** 18 - usd_decimal);
     }
@@ -88,6 +88,8 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable, Acce
      **/
     function deposit(uint256 amount) external isTokenSet whenNotPaused {
         require(token_usd.balanceOf(msg.sender) >= amount, "You need to have enough USD in your balance");
+        require(token_usd.allowance(msg.sender, address(this)) >= amount, "The contract has not allowed enough USD Token on the fund Wallet to spend it");
+
 
         uint256 amountLTY = getAmountLTY(amount); // Amout LTY bought with the USD of the user
         bool res = token_usd.transferFrom(msg.sender, fundWallet, amount); // transfer all the USD in the fund Wallet
@@ -101,6 +103,13 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable, Acce
      * @param amount total lty token you want to withdraw
      **/
     function withdraw(uint256 amount) external isTokenSet whenNotPaused {
+        require(token.balanceOf(msg.sender) >= amount, "You don't have enough money to withdraw.");
+        require(token.allowance(msg.sender, address(this)) >= amount, "You haven't allowed enough token to withdraw.");
 
+        uint256 amountUSD = getAmountUSD(amount); // Amout LTY bought with the USD of the user
+        require(token_usd.allowance(fundWallet, address(this)) >= amountUSD, "The fund wallet hasn't allowed enough token to withdraw.");
+
+        token.burnFrom(msg.sender, amount);
+        token_usd.transferFrom(fundWallet, msg.sender, amountUSD);
     }
 }
