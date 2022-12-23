@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
@@ -71,11 +71,11 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable, Acce
     }
 
     function getAmountUSD(uint256 amount) public view returns(uint256) {
-        return amount / (10 ** 18 - usd_decimal);
+        return amount / (10 ** (18 - usd_decimal));
     }
 
     function getAmountLTY(uint256 amount) public view returns(uint256) {
-        return amount * (10 ** 18 - usd_decimal);
+        return amount * (10 ** (18 - usd_decimal));
     }
 
     /**
@@ -88,13 +88,16 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable, Acce
      **/
     function deposit(uint256 amount) external isTokenSet whenNotPaused {
         require(token_usd.balanceOf(msg.sender) >= amount, "You need to have enough USD in your balance");
-        require(token_usd.allowance(msg.sender, address(this)) >= amount, "The contract has not allowed enough USD Token on the fund Wallet to spend it");
+        require(token_usd.allowance(msg.sender, address(this)) >= amount, "The contract has not allowed enough USD Token on the contract to spend it");
+
 
         uint256 amountLTY = getAmountLTY(amount); // Amout LTY bought with the USD of the user
         bool res = token_usd.transferFrom(msg.sender, fundWallet, amount); // transfer all the USD in the fund Wallet
         require(res, "The Transfer has been failed, please try again.");
 
         token.mint(msg.sender, amountLTY);   // Token LDG minted and gived to the users
+        console.log("Amount :", amount);
+        console.log("Amount LTY :", amountLTY);
     }
 
     /**
@@ -106,6 +109,8 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable, Acce
         require(token.allowance(msg.sender, address(this)) >= amount, "You haven't allowed enough token to withdraw.");
 
         uint256 amountUSD = getAmountUSD(amount); // Amout LTY bought with the USD of the user
+        console.log("Amount USD :", amountUSD);
+        console.log("AMOUNT : ", amount);
         require(token_usd.allowance(fundWallet, address(this)) >= amountUSD, "The fund wallet hasn't allowed enough token to withdraw.");
 
         token.burnFrom(msg.sender, amount);
