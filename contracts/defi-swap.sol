@@ -90,7 +90,6 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable, Acce
         require(token_usd.balanceOf(msg.sender) >= amount, "You need to have enough USD in your balance");
         require(token_usd.allowance(msg.sender, address(this)) >= amount, "The contract has not allowed enough USD Token on the fund Wallet to spend it");
 
-
         uint256 amountLTY = getAmountLTY(amount); // Amout LTY bought with the USD of the user
         bool res = token_usd.transferFrom(msg.sender, fundWallet, amount); // transfer all the USD in the fund Wallet
         require(res, "The Transfer has been failed, please try again.");
