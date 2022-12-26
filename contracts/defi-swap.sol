@@ -14,6 +14,7 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
         __Pausable_init();
         usd_decimal = 6;
     }
+
     address tokenAddress; // LDG TOKEN ADDRESS
     address USDAddress; // USD ADDRESS
     address fundWallet; // Fund Wallet
@@ -23,7 +24,6 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
 
     uint256 balance; // USD balance
     uint8 public usd_decimal; // Decimal of USD Token
-
 
     modifier isTokenSet() { // Check is all the address has been correctly set
         require(USDAddress != address(0x0), "USD Token address cannot be 0x0.");

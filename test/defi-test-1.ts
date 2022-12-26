@@ -1,124 +1,124 @@
-import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
-import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
+import { time } from "@nomicfoundation/hardhat-network-helpers";
 
-describe("Lock", function () {
-  // We define a fixture to reuse the same setup in every test.
-  // We use loadFixture to run this setup once, snapshot that state,
-  // and reset Hardhat Network to that snapshot in every test.
-  async function deployOneYearLockFixture() {
-    const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-    const ONE_GWEI = 1_000_000_000;
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-    const lockedAmount = ONE_GWEI;
-    const unlockTime = (await time.latest()) + ONE_YEAR_IN_SECS;
-
-    // Contracts are deployed using the first signer/account by default
-    const [owner, otherAccount] = await ethers.getSigners();
-
-    const Lock = await ethers.getContractFactory("Lock");
-    const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-    return { lock, unlockTime, lockedAmount, owner, otherAccount };
-  }
-
-  describe("Deployment", function () {
-    it("Should set the right unlockTime", async function () {
-      const { lock, unlockTime } = await loadFixture(deployOneYearLockFixture);
-
-      expect(await lock.unlockTime()).to.equal(unlockTime);
-    });
-
-    it("Should set the right owner", async function () {
-      const { lock, owner } = await loadFixture(deployOneYearLockFixture);
-
-      expect(await lock.owner()).to.equal(owner.address);
-    });
-
-    it("Should receive and store the funds to lock", async function () {
-      const { lock, lockedAmount } = await loadFixture(
-        deployOneYearLockFixture
-      );
-
-      expect(await ethers.provider.getBalance(lock.address)).to.equal(
-        lockedAmount
-      );
-    });
-
-    it("Should fail if the unlockTime is not in the future", async function () {
-      // We don't use the fixture here because we want a different deployment
-      const latestTime = await time.latest();
-      const Lock = await ethers.getContractFactory("Lock");
-      await expect(Lock.deploy(latestTime, { value: 1 })).to.be.revertedWith(
-        "Unlock time should be in the future"
-      );
-    });
+describe("Defi - token/swap Smart Contract", function () {
+  before(async function () {
+    [this.owner, this.fundWallet, this.testWallet] = await ethers.getSigners();
+    this.decimals_token = 10 ** 18;
+    this.decimals_usd = 10 ** 6;
   });
 
-  describe("Withdrawals", function () {
-    describe("Validations", function () {
-      it("Should revert with the right error if called too soon", async function () {
-        const { lock } = await loadFixture(deployOneYearLockFixture);
+  it("Should deploy the smart contract", async function () {
+    console.log("###################");
+    console.log("owner wallet :", this.owner.address);
+    console.log("fund wallet :", this.fundWallet.address);
+    console.log("test wallet :", this.testWallet.address);
+    console.log("###################\n");
 
-        await expect(lock.withdraw()).to.be.revertedWith(
-          "You can't withdraw yet"
-        );
-      });
+    this.usdToken = await ethers.getContractFactory("usd");
+    this.usdDeployed = await this.usdToken.deploy();
 
-      it("Should revert with the right error if called from another account", async function () {
-        const { lock, unlockTime, otherAccount } = await loadFixture(
-          deployOneYearLockFixture
-        );
+    await this.usdDeployed.deployed();
+    console.log("usdDeployed: " + this.usdDeployed.address + "\n");
 
-        // We can increase the time in Hardhat Network
-        await time.increaseTo(unlockTime);
-
-        // We use lock.connect() to send a transaction from another account
-        await expect(lock.connect(otherAccount).withdraw()).to.be.revertedWith(
-          "You aren't the owner"
-        );
-      });
-
-      it("Shouldn't fail if the unlockTime has arrived and the owner calls it", async function () {
-        const { lock, unlockTime } = await loadFixture(
-          deployOneYearLockFixture
-        );
-
-        // Transactions are sent using the first signer by default
-        await time.increaseTo(unlockTime);
-
-        await expect(lock.withdraw()).not.to.be.reverted;
-      });
+    this.defiToken = await ethers.getContractFactory("LDG01");
+    this.tokenDeployed = await upgrades.deployProxy(this.defiToken, {
+      initializer: "initialize",
     });
 
-    describe("Events", function () {
-      it("Should emit an event on withdrawals", async function () {
-        const { lock, unlockTime, lockedAmount } = await loadFixture(
-          deployOneYearLockFixture
-        );
+    await this.tokenDeployed.deployed();
+    console.log("tokenDeployed: " + this.tokenDeployed.address + "\n");
 
-        await time.increaseTo(unlockTime);
-
-        await expect(lock.withdraw())
-          .to.emit(lock, "Withdrawal")
-          .withArgs(lockedAmount, anyValue); // We accept any value as `when` arg
-      });
+    this.defiSwap = await ethers.getContractFactory("ldgSwap");
+    this.swapDeployed = await upgrades.deployProxy(this.defiSwap, {
+      initializer: "initialize",
     });
 
-    describe("Transfers", function () {
-      it("Should transfer the funds to the owner", async function () {
-        const { lock, unlockTime, lockedAmount, owner } = await loadFixture(
-          deployOneYearLockFixture
-        );
+    await this.swapDeployed.deployed();
+    console.log("swapDeployed: " + this.swapDeployed.address + "\n");
 
-        await time.increaseTo(unlockTime);
+    this.MINT_ROLE = await this.tokenDeployed.MINT_ROLE();
 
-        await expect(lock.withdraw()).to.changeEtherBalances(
-          [owner, lock],
-          [lockedAmount, -lockedAmount]
-        );
-      });
-    });
+    await this.tokenDeployed.grantRole(
+      this.MINT_ROLE,
+      this.swapDeployed.address
+    );
+    await this.swapDeployed.setToken(this.tokenDeployed.address);
+    await this.swapDeployed.setTokenUSD(this.usdDeployed.address);
+    await this.swapDeployed.setFundWallet(this.fundWallet.address);
   });
+
+  it("Should mint/approve usd for Test Wallet in swap SM and should approve 1 usd to swap SM with fund wallet", async function () {
+    await this.usdDeployed.mint(this.testWallet.address, 11);
+    await this.usdDeployed
+      .connect(this.testWallet)
+      .approve(this.swapDeployed.address, 11 * this.decimals_usd);
+    await this.usdDeployed
+      .connect(this.fundWallet)
+      .approve(this.swapDeployed.address, 1 * this.decimals_usd);
+
+    const balanceUSDTestWallet = await this.usdDeployed.balanceOf(
+      this.testWallet.address
+    );
+    expect(JSON.parse(balanceUSDTestWallet)).to.equal(11 * this.decimals_usd);
+    const allowanceUSDTestWallet = await this.usdDeployed.allowance(
+      this.testWallet.address,
+      this.swapDeployed.address
+    );
+    expect(JSON.parse(allowanceUSDTestWallet)).to.equal(11 * this.decimals_usd);
+    const allowanceUSDFundWallet = await this.usdDeployed.allowance(
+      this.fundWallet.address,
+      this.swapDeployed.address
+    );
+    expect(JSON.parse(allowanceUSDFundWallet)).to.equal(1 * this.decimals_usd);
+  });
+
+  it("Should deposit 1 usd for 1 lty with test Wallet", async function () {
+    await this.swapDeployed
+      .connect(this.testWallet)
+      .deposit(1 * this.decimals_usd);
+
+    // check if the test wallet received the lty
+    const balanceLTYTestWallet = await this.tokenDeployed.balanceOf(
+      this.testWallet.address
+    );
+    expect(JSON.parse(balanceLTYTestWallet)).to.equal(1 * this.decimals_token);
+
+    // check if the fund wallet received the usd
+    const balanceUSDFundWallet = await this.usdDeployed.balanceOf(
+      this.fundWallet.address
+    );
+    expect(JSON.parse(balanceUSDFundWallet)).to.equal(1 * this.decimals_usd);
+    
+    await time.increase(60 * 60 * 24 * 365); // 1 year
+
+    const balanceLTY = await this.tokenDeployed.balanceOf(this.testWallet.address)
+    expect(JSON.parse(balanceLTY)).to.equal(1.05 * this.decimals_token) // 5 % more for 1 year of staking
+  });
+
+  it("Should approve/withdraw 1 lty for 1 usd with test Wallet", async function () {
+    await this.tokenDeployed.connect(this.testWallet).approve(this.swapDeployed.address, BigInt(1 * this.decimals_token))
+
+    const allowanceTestWallet = await this.tokenDeployed.allowance(this.testWallet.address, this.swapDeployed.address)
+    expect(JSON.parse(allowanceTestWallet)).to.equal(1 * this.decimals_token)
+
+    await this.swapDeployed.connect(this.testWallet).withdraw(BigInt(1 * this.decimals_token))
+
+    const balanceUSDFundWallet = await this.usdDeployed.balanceOf(this.fundWallet.address)
+    expect(JSON.parse(balanceUSDFundWallet)).to.equal(0)
+
+    const balanceLTYTestWallet = await this.tokenDeployed.balanceOf(this.testWallet.address)
+    console.log(JSON.parse(balanceLTYTestWallet))
+    expect(JSON.parse(balanceLTYTestWallet)).to.below(1 * this.decimals_token)
+
+    const balanceUSDTestWallet = await this.usdDeployed.balanceOf(this.testWallet.address)
+    expect(JSON.parse(balanceUSDTestWallet)).to.equal(11 * this.decimals_usd)
+
+    
+  })
 });

@@ -13,12 +13,6 @@ const ETHERSCAN_API_KEY:any = process.env.ETHERSCAN_API_KEY
 
 const config: HardhatUserConfig = {
   solidity: "0.8.7",
-  //   settings: {
-  //     optimizer: {
-  //        enable:true,
-  //        runs:200
-  //     }
-  //  },
   //  networks: {
   //     hardhat: {
   //        chainId: 1337
@@ -36,6 +30,9 @@ const config: HardhatUserConfig = {
       accounts: [`${process.env.TEST}`],
     },
   },
+  // gasReporter: {
+  //   enabled: true,
+  // }
 };
 
 export default config;

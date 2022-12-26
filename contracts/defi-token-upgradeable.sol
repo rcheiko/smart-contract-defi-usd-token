@@ -8,8 +8,16 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-contract LDG01 is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, PausableUpgradeable, OwnableUpgradeable, AccessControlUpgradeable {
+import "hardhat/console.sol";
 
+contract LDG01 is
+    Initializable,
+    ERC20Upgradeable,
+    ERC20BurnableUpgradeable,
+    PausableUpgradeable,
+    OwnableUpgradeable,
+    AccessControlUpgradeable
+{
     function initialize() external initializer {
         __ERC20_init("LDG01", "LDG01");
         __Ownable_init();
@@ -19,10 +27,10 @@ contract LDG01 is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, Pau
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         APY = 50;
     }
-    
+
     bytes32 public constant MINT_ROLE = keccak256("MINT_ROLE"); // MINT ROLE TO CALL mint in different smart contract
-    uint32 internal APY; // revenue in % per year that would be generated in token ( 3 decimals ) example : 50 = 0.05 = 5%
-    mapping (address => uint256) internal lastUpdateInterest; // When is the last time was updated the timestamp of his token
+    uint32 public APY; // revenue in % per year that would be generated in token ( 3 decimals ) example : 50 = 0.05 = 5%
+    mapping(address => uint256) internal lastUpdateInterest; // When is the last time was updated the timestamp of his token
     address[] internal userAddr; // We will store all address to update the mapping of lastUpdateInterest
 
     function pause() public onlyOwner {
@@ -33,7 +41,10 @@ contract LDG01 is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, Pau
         _unpause();
     }
 
-    function mint(address to, uint256 amount) public onlyRole(MINT_ROLE) whenNotPaused {
+    function mint(
+        address to,
+        uint256 amount
+    ) public onlyRole(MINT_ROLE) whenNotPaused {
         require(hasRole(MINT_ROLE, msg.sender));
         updateBalance(to);
         _mint(to, amount);
@@ -62,7 +73,7 @@ contract LDG01 is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, Pau
         }
         lastUpdateInterest[_user] = block.timestamp;
         if (previousPrincipalBalance == 0) {
-            return ;
+            return;
         }
         _mint(_user, balanceIncrease);
     }
@@ -71,7 +82,9 @@ contract LDG01 is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, Pau
      * @dev Percentage of time staking for 365 days before the last update ( example : 36,5 days is 10% )
      * @param _user the address from wich you want to see the balance
      **/
-    function PercentageTimeStakingBeforeLastUpdate(address _user) internal view returns(uint256) {
+    function PercentageTimeStakingBeforeLastUpdate(
+        address _user
+    ) internal view returns (uint256) {
         if (lastUpdateInterest[_user] == 0) {
             return 0;
         }
@@ -83,19 +96,26 @@ contract LDG01 is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, Pau
      * @dev balance of the tokens + interest accumulate with your principal balance
      * @param _user the address from wich you want to see the balance
      **/
-    function balanceOf(address _user) public view override returns(uint256) {
+    function balanceOf(address _user) public view override returns (uint256) {
         uint256 currentPrincipalBalance = super.balanceOf(_user);
 
         if (currentPrincipalBalance == 0) {
             return 0;
         }
 
-        uint256 PercentageTimeStaking = PercentageTimeStakingBeforeLastUpdate(_user);
+        uint256 PercentageTimeStaking = PercentageTimeStakingBeforeLastUpdate(
+            _user
+        );
 
-        return (((currentPrincipalBalance * PercentageTimeStaking) * APY / 10 ** 21) + currentPrincipalBalance); // interest accumulate + currentBalance ( 21 = 18 decimals + 3 APY decimals )
+        // console.log(currentPrincipalBalance);
+        // console.log(PercentageTimeStaking);
+        // console.log(((currentPrincipalBalance * PercentageTimeStaking) * APY / 10 ** 21) + currentPrincipalBalance);
+
+        return ((((currentPrincipalBalance * PercentageTimeStaking) * APY) /
+            10 ** 21) + currentPrincipalBalance); // interest accumulate + currentBalance ( 21 = 18 decimals + 3 APY decimals )
     }
 
-    function principalBalanceOf(address _user) external view returns(uint256) {
+    function principalBalanceOf(address _user) external view returns (uint256) {
         return super.balanceOf(_user);
     }
 
@@ -122,11 +142,21 @@ contract LDG01 is Initializable, ERC20Upgradeable, ERC20BurnableUpgradeable, Pau
         super._transfer(_from, _to, _amount); //performs the transfer
     }
 
-    function _beforeTokenTransfer(address from, address to, uint256 amount)
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    )
         internal
-        whenNotPaused // check if the contract is paused
         override
+        whenNotPaused // check if the contract is paused
     {
         super._beforeTokenTransfer(from, to, amount);
+    }
+
+    function burnFrom(address account, uint256 amount) public override virtual {
+        updateBalance(account);
+        _spendAllowance(account, _msgSender(), amount);
+        _burn(account, amount);
     }
 }
