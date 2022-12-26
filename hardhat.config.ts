@@ -9,8 +9,10 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
+const ETHERSCAN_API_KEY:any = process.env.ETHERSCAN_API_KEY
+
 const config: HardhatUserConfig = {
-  solidity: "0.8.17",
+  solidity: "0.8.7",
   //   settings: {
   //     optimizer: {
   //        enable:true,
@@ -24,14 +26,14 @@ const config: HardhatUserConfig = {
   //  }
   etherscan: {
     apiKey: {
-      goerli: "5E26R6QIAKT14HB3Z7QJYII6338G38GCPX",
+      goerli: ETHERSCAN_API_KEY,
     },
   },
   networks: {
     hardhat: {},
     goerli: {
       url: `https://eth-goerli.g.alchemy.com/v2/${process.env.API_KEY}`,
-      accounts: [`${process.env.PRIVATE_KEY}`],
+      accounts: [`${process.env.TEST}`],
     },
   },
 };
