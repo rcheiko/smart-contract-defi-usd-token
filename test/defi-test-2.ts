@@ -2,11 +2,7 @@ import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-describe("Test 1", function () {
+describe("Test 2", function () {
   before(async function () {
     [this.owner, this.fundWallet, this.testWallet] = await ethers.getSigners();
     this.decimals_token = 10 ** 18;
@@ -14,12 +10,6 @@ describe("Test 1", function () {
   });
 
   it("Should deploy the smart contract", async function () {
-    console.log("###################");
-    console.log("owner wallet :", this.owner.address);
-    console.log("fund wallet :", this.fundWallet.address);
-    console.log("test wallet :", this.testWallet.address);
-    console.log("###################\n");
-
     this.usdToken = await ethers.getContractFactory("usd");
     this.usdDeployed = await this.usdToken.deploy();
 
@@ -78,90 +68,45 @@ describe("Test 1", function () {
     expect(JSON.parse(allowanceUSDFundWallet)).to.equal(1 * this.decimals_usd);
   });
 
-  it("Should deposit 1 usd for 1 lty with test Wallet", async function () {
+  it("Should try to deposit and withdraw more than he have", async function () {
     await this.swapDeployed
       .connect(this.testWallet)
       .deposit(1 * this.decimals_usd);
 
-    // check if the test wallet received the lty
-    const balanceLTYTestWallet = await this.tokenDeployed.balanceOf(
-      this.testWallet.address
-    );
-    expect(JSON.parse(balanceLTYTestWallet)).to.equal(1 * this.decimals_token);
+    await this.tokenDeployed
+      .connect(this.testWallet)
+      .approve(this.swapDeployed.address, BigInt(2 * this.decimals_token));
 
-    // check if the fund wallet received the usd
-    const balanceUSDFundWallet = await this.usdDeployed.balanceOf(
-      this.fundWallet.address
-    );
-    expect(JSON.parse(balanceUSDFundWallet)).to.equal(1 * this.decimals_usd);
+    await expect(
+      this.swapDeployed
+        .connect(this.testWallet)
+        .withdraw(BigInt(2 * this.decimals_token))
+    ).to.be.revertedWith("You don't have enough money to withdraw.");
+  });
 
+  it("Should wait 1 year and try to transfer the balanceOf", async function () {
     await time.increase(60 * 60 * 24 * 365); // 1 year
 
-    const balanceLTY = await this.tokenDeployed.balanceOf(
+    let balanceLTYTestWallet = await this.tokenDeployed.balanceOf(
       this.testWallet.address
     );
-    expect(JSON.parse(balanceLTY)).to.equal(1.05 * this.decimals_token); // 5 % more for 1 year of staking
-  });
 
-  it("Should approve/withdraw 1 lty for 1 usd with test Wallet", async function () {
     await this.tokenDeployed
       .connect(this.testWallet)
-      .approve(this.swapDeployed.address, BigInt(1 * this.decimals_token));
+      .transfer(this.owner.address, BigInt(1.05 * this.decimals_token));
 
-    const allowanceTestWallet = await this.tokenDeployed.allowance(
-      this.testWallet.address,
-      this.swapDeployed.address
-    );
-    expect(JSON.parse(allowanceTestWallet)).to.equal(1 * this.decimals_token);
-
-    await this.swapDeployed
-      .connect(this.testWallet)
-      .withdraw(BigInt(1 * this.decimals_token));
-
-    const balanceUSDFundWallet = await this.usdDeployed.balanceOf(
-      this.fundWallet.address
-    );
-    expect(JSON.parse(balanceUSDFundWallet)).to.equal(0);
-
-    const balanceLTYTestWallet = await this.tokenDeployed.balanceOf(
-      this.testWallet.address
-    );
-    expect(JSON.parse(balanceLTYTestWallet))
-      .to.below(0.06 * this.decimals_token)
-      .to.above(0.05 * this.decimals_token);
-
-    const balanceUSDTestWallet = await this.usdDeployed.balanceOf(
-      this.testWallet.address
-    );
-    expect(JSON.parse(balanceUSDTestWallet)).to.equal(11 * this.decimals_usd);
-  });
-
-  it("Should transfer lty token -> Test wallet to Owner wallet and hold 1 year", async function () {
-    await this.tokenDeployed
-      .connect(this.testWallet)
-      .transfer(this.owner.address, BigInt(0.05 * this.decimals_token));
-
-    const balanceLTYOwnerWallet1 = await this.tokenDeployed.balanceOf(
-      this.owner.address
-    );
-    expect(JSON.parse(balanceLTYOwnerWallet1)).to.equal(
-      0.05 * this.decimals_token
-    );
-
-    const balanceLTYTestWallet = await this.tokenDeployed.balanceOf(
+    balanceLTYTestWallet = await this.tokenDeployed.balanceOf(
       this.testWallet.address
     );
     expect(JSON.parse(balanceLTYTestWallet)).to.below(
       0.01 * this.decimals_token
     );
 
-    await time.increase(60 * 60 * 24 * 365); // 1 year
-
-    const balanceLTYOwnerWallet2 = await this.tokenDeployed.balanceOf(
+    const balanceLTYOwnerWallet = await this.tokenDeployed.balanceOf(
       this.owner.address
     );
-    expect(JSON.parse(balanceLTYOwnerWallet2)).to.equal(
-      0.0525 * this.decimals_token
-    ); // + 5 % of 0.05 is 0.0525
+    expect(JSON.parse(balanceLTYOwnerWallet)).to.equal(
+      1.05 * this.decimals_token
+    );
   });
 });
