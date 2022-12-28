@@ -27,7 +27,7 @@ const config: HardhatUserConfig = {
     hardhat: {},
     goerli: {
       url: `https://eth-goerli.g.alchemy.com/v2/${process.env.API_KEY}`,
-      accounts: [`${process.env.TEST}`],
+      accounts: [`${process.env.OWNER}`],
     },
   },
   gasReporter: {
