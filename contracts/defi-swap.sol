@@ -9,6 +9,9 @@ import "./defi-token-upgradeable.sol";
 
 contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
 
+    /**
+     * @dev Initialize the upgradeable smart contract
+     **/
     function initialize() external initializer {
         __Ownable_init();
         __Pausable_init();
@@ -32,10 +35,16 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
         _;
     }
 
+    /**
+     * @dev pause the deposit / withdraw
+     **/
     function pause() public onlyOwner {
         _pause();
     }
 
+    /**
+     * @dev unpause the deposit / withdraw
+     **/
     function unpause() public onlyOwner {
         _unpause();
     }
@@ -76,7 +85,7 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
 
     /**
      * @dev It will give you equivalent amount of LTY Token for 1 USD / 1 LTY01
-     * @param amount total usd you want to deposit
+     * @param amount of usd you want to deposit
      **/
     function deposit(uint256 amount) external isTokenSet whenNotPaused {
         require(token_usd.balanceOf(msg.sender) >= amount, "You need to have enough USD in your balance");
@@ -92,7 +101,7 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
 
     /**
      * @dev It will give you equivalent amount of USDC for 1 LTY01 / 1 USD
-     * @param amount total lty token you want to withdraw
+     * @param amount of lty token you want to withdraw
      **/
     function withdraw(uint256 amount) external isTokenSet whenNotPaused {
         require(token.balanceOf(msg.sender) >= amount, "You don't have enough money to withdraw.");

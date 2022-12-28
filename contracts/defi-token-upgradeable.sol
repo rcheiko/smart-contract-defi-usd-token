@@ -18,6 +18,9 @@ contract LDG01 is
     OwnableUpgradeable,
     AccessControlUpgradeable
 {
+    /**
+     * @dev Initialize the upgradeable smart contract
+     **/
     function initialize() external initializer {
         __ERC20_init("LDG01", "LDG01");
         __Ownable_init();
@@ -33,14 +36,25 @@ contract LDG01 is
     mapping(address => uint256) internal lastUpdateInterest; // When is the last time was updated the timestamp of his token
     address[] internal userAddr; // We will store all address to update the mapping of lastUpdateInterest
 
+    /**
+     * @dev pause the transfer
+     **/
     function pause() public onlyOwner {
         _pause();
     }
 
+    /**
+     * @dev unpause the transfer
+     **/
     function unpause() public onlyOwner {
         _unpause();
     }
 
+    /**
+     * @dev The swap contract can mint new token for the people who deposit usd
+     * @param to the user that will be minted token
+     * @param amount of new token to mint
+     **/
     function mint(
         address to,
         uint256 amount
@@ -52,7 +66,7 @@ contract LDG01 is
 
     /**
      * @dev This function that would generated APY with 3 decimals ( example : 100 = 0.1 = 10% )
-     * @param _apy the APY with 3 decimals
+     * @param _apy with 3 decimals
      **/
     function setAPY(uint16 _apy) external onlyOwner {
         for (uint256 i = 0; i < userAddr.length; i++) {
@@ -63,7 +77,7 @@ contract LDG01 is
 
     /**
      * @dev The contract will calculate your benefit and mint for you the benefit in your account
-     * @param _user the address from wich you want to update the balance
+     * @param _user address from wich you want to update the balance
      **/
     function updateBalance(address _user) internal {
         uint256 previousPrincipalBalance = super.balanceOf(_user);
@@ -80,7 +94,7 @@ contract LDG01 is
 
     /**
      * @dev Percentage of time staking for 365 days before the last update ( example : 36,5 days is 10% )
-     * @param _user the address from wich you want to see the balance
+     * @param _user address from wich you want to see the balance
      **/
     function PercentageTimeStakingBeforeLastUpdate(
         address _user
@@ -93,8 +107,8 @@ contract LDG01 is
     }
 
     /**
-     * @dev balance of the tokens + interest accumulate with your principal balance
-     * @param _user the address from wich you want to see the balance
+     * @dev balance of the token + interest accumulate with your principal balance
+     * @param _user address from wich you want to see the balance
      **/
     function balanceOf(address _user) public view override returns (uint256) {
         uint256 currentPrincipalBalance = super.balanceOf(_user);
@@ -111,6 +125,10 @@ contract LDG01 is
             10 ** 21) + currentPrincipalBalance); // interest accumulate + currentBalance ( 21 = 18 decimals + 3 APY decimals )
     }
 
+    /**
+     * @dev balance of the token with not the interest after the last update
+     * @param _user address from wich you want to see the balance
+     **/
     function principalBalanceOf(address _user) external view returns (uint256) {
         return super.balanceOf(_user);
     }
@@ -138,6 +156,20 @@ contract LDG01 is
         super._transfer(_from, _to, _amount); //performs the transfer
     }
 
+    /**
+     * @dev Hook that is called before any transfer of tokens. This includes
+     * minting and burning.
+     *
+     * Calling conditions:
+     *
+     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
+     * will be transferred to `to`.
+     * - when `from` is zero, `amount` tokens will be minted for `to`.
+     * - when `to` is zero, `amount` of ``from``'s tokens will be burned.
+     * - `from` and `to` are never both zero.
+     *
+     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
+     */
     function _beforeTokenTransfer(
         address from,
         address to,
@@ -150,7 +182,18 @@ contract LDG01 is
         super._beforeTokenTransfer(from, to, amount);
     }
 
-    function burnFrom(address account, uint256 amount) public override virtual {
+    /**
+     * @dev Destroys `amount` tokens from `account`, deducting from the caller's
+     * allowance.
+     *
+     * See {ERC20-_burn} and {ERC20-allowance}.
+     *
+     * Requirements:
+     *
+     * - the caller must have allowance for ``accounts``'s tokens of at least
+     * `amount`.
+     */
+    function burnFrom(address account, uint256 amount) public virtual override {
         updateBalance(account);
         _spendAllowance(account, _msgSender(), amount);
         _burn(account, amount);
