@@ -81,10 +81,18 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
         usd_decimal = decimal;
     }
 
+    /**
+     * @dev It will give you the amount of USD token for amount of LTY token
+     * @param amount of LTY token
+     **/
     function getAmountUSD(uint256 amount) public view returns (uint256) {
         return amount / (10 ** (18 - usd_decimal));
     }
 
+    /**
+     * @dev It will give you the amount of LTY token for amount of USD token
+     * @param amount of USD token
+     **/
     function getAmountLTY(uint256 amount) public view returns (uint256) {
         return amount * (10 ** (18 - usd_decimal));
     }
