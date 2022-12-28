@@ -109,4 +109,25 @@ describe("Test 2", function () {
       1.05 * this.decimals_token
     );
   });
+
+  it("Should try to mint LTY Token directly and get reverted", async function () {
+    await expect(
+      this.tokenDeployed
+        .connect(this.testWallet)
+        .mint(this.testWallet.address, BigInt(100 * this.decimals_token))
+    ).to.be.reverted;
+  });
+
+  it("Should wait 1 year, try to setAPY and check if balance has been updated", async function () {
+    await time.increase(60 * 60 * 24 * 365); // 1 year
+
+    await this.tokenDeployed.connect(this.owner).setAPY(45);
+
+    const balanceLTYOwnerWallet = await this.tokenDeployed.principalBalanceOf(
+      this.owner.address
+    );
+    expect(JSON.parse(balanceLTYOwnerWallet))
+      .to.above(1.1 * this.decimals_token)
+      .to.below(1.103 * this.decimals_token);
+  });
 });

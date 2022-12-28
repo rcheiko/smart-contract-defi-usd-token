@@ -107,10 +107,6 @@ contract LDG01 is
             _user
         );
 
-        // console.log(currentPrincipalBalance);
-        // console.log(PercentageTimeStaking);
-        // console.log(((currentPrincipalBalance * PercentageTimeStaking) * APY / 10 ** 21) + currentPrincipalBalance);
-
         return ((((currentPrincipalBalance * PercentageTimeStaking) * APY) /
             10 ** 21) + currentPrincipalBalance); // interest accumulate + currentBalance ( 21 = 18 decimals + 3 APY decimals )
     }
