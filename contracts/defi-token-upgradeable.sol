@@ -153,7 +153,7 @@ contract LDG01 is
     ) internal virtual override {
         updateBalance(_from);
         updateBalance(_to);
-        super._transfer(_from, _to, _amount); //performs the transfer
+        super._transfer(_from, _to, _amount);
     }
 
     /**

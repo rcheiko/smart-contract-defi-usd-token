@@ -22,24 +22,24 @@
     },
     {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x04f98f2d5b1b2d172d2335c6ff2ccb71d2065334a6142abe66ddca80f7dd1748",
+      "txHash": "0x04ae6fe7270fec5c6ba71f01126c3bc9be34f905c64d163e27154101fa63a78e",
       "kind": "transparent"
     },
     {
       "address": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
-      "txHash": "0xbf94e1e30055b13139f8c2992fa7961c751c2c2ec6b8089788baff7c391bd834",
+      "txHash": "0x2ac01b57cec33192aaeb760da9353338119334927d953a524b438630fb12fc3a",
       "kind": "transparent"
     },
     {
       "address": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
-      "txHash": "0xca35a1c1405cbc008b9a7f761eb64e0cb833d0bd7ce21abb1f29a5578a75f874",
+      "txHash": "0x77626eef71d6e5f93680d1bc0eb5f545d4661655338241135526cf581578ee70",
       "kind": "transparent"
     }
   ],
   "impls": {
     "0a826f2824f88948fed120fe20aed9583c4c95579f4d932477fb48067fb21540": {
       "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "txHash": "0x77174519904dd290efcb2ea55373389b712c7f4f923fc31f700aa383744cf3bd",
+      "txHash": "0xe8c6ff1d405169203e1e8566a07eafe207a4c89b1acde0f5d9b2afe2f19dc0f9",
       "layout": {
         "solcVersion": "0.8.7",
         "storage": [
@@ -106,7 +106,7 @@
             "slot": "151",
             "type": "t_address",
             "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:18"
+            "src": "contracts/defi-swap.sol:20"
           },
           {
             "label": "USDAddress",
@@ -114,7 +114,7 @@
             "slot": "152",
             "type": "t_address",
             "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:19"
+            "src": "contracts/defi-swap.sol:21"
           },
           {
             "label": "fundWallet",
@@ -122,7 +122,7 @@
             "slot": "153",
             "type": "t_address",
             "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:20"
+            "src": "contracts/defi-swap.sol:22"
           },
           {
             "label": "token_usd",
@@ -130,15 +130,15 @@
             "slot": "154",
             "type": "t_contract(IERC20Upgradeable)1526",
             "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:22"
+            "src": "contracts/defi-swap.sol:24"
           },
           {
             "label": "token",
             "offset": 0,
             "slot": "155",
-            "type": "t_contract(LDG01)3761",
+            "type": "t_contract(LDG01)3764",
             "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:23"
+            "src": "contracts/defi-swap.sol:25"
           },
           {
             "label": "balance",
@@ -146,7 +146,7 @@
             "slot": "156",
             "type": "t_uint256",
             "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:25"
+            "src": "contracts/defi-swap.sol:27"
           },
           {
             "label": "usd_decimal",
@@ -154,7 +154,7 @@
             "slot": "157",
             "type": "t_uint8",
             "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:26"
+            "src": "contracts/defi-swap.sol:28"
           }
         ],
         "types": {
@@ -178,7 +178,7 @@
             "label": "contract IERC20Upgradeable",
             "numberOfBytes": "20"
           },
-          "t_contract(LDG01)3761": {
+          "t_contract(LDG01)3764": {
             "label": "contract LDG01",
             "numberOfBytes": "20"
           },
@@ -195,7 +195,7 @@
     },
     "cd964f68250000689bab4e2e3c356d683ad31da59d225241e724c85e354760de": {
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0xa6c3a80c1f6877beb32f10dd0383b63b89db75386e156697ae2fbdb8b951177d",
+      "txHash": "0x0c58747593e6bdf12b8e588e722f7c55798d01fd7eaa22279d6da825d3fbf1be",
       "layout": {
         "solcVersion": "0.8.7",
         "storage": [

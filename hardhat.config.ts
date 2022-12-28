@@ -30,9 +30,9 @@ const config: HardhatUserConfig = {
       accounts: [`${process.env.TEST}`],
     },
   },
-  // gasReporter: {
-  //   enabled: true,
-  // }
+  gasReporter: {
+    enabled: true,
+  }
 };
 
 export default config;
