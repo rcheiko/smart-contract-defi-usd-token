@@ -9,30 +9,43 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const ETHERSCAN_API_KEY:any = process.env.ETHERSCAN_API_KEY
+const API_KEY_ETHERSCAN: any = process.env.API_KEY_ETHERSCAN;
+const API_KEY_POLYGON: any = process.env.API_KEY_POLYGON;
 
 const config: HardhatUserConfig = {
   solidity: "0.8.7",
+
   //  networks: {
   //     hardhat: {
   //        chainId: 1337
   //     }
-  //  }
+  //  },
+
   etherscan: {
     apiKey: {
-      goerli: ETHERSCAN_API_KEY,
+      goerli: API_KEY_ETHERSCAN,
+      polygonMumbai: API_KEY_POLYGON
     },
   },
+
+  // networks: {
+  //   hardhat: {},
+  //   goerli: {
+  //     url: `https://eth-goerli.g.alchemy.com/v2/${process.env.API_KEY_GOERLI}`,
+  //     accounts: [`${process.env.OWNER}`],
+  //   },
+  // },
+
   networks: {
     hardhat: {},
-    goerli: {
-      url: `https://eth-goerli.g.alchemy.com/v2/${process.env.API_KEY}`,
+    polygon_mumbai: {
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.API_KEY_MUMBAI}`,
       accounts: [`${process.env.OWNER}`],
     },
   },
   gasReporter: {
     enabled: true,
-  }
+  },
 };
 
 export default config;
