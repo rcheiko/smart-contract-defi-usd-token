@@ -22,180 +22,24 @@
     },
     {
       "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      "txHash": "0x04f98f2d5b1b2d172d2335c6ff2ccb71d2065334a6142abe66ddca80f7dd1748",
+      "txHash": "0xb56375abd7e93b14f6dad551b009d4821d4515b48a8ae19bb7cb3394e8fa4865",
       "kind": "transparent"
     },
     {
       "address": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
-      "txHash": "0xbf94e1e30055b13139f8c2992fa7961c751c2c2ec6b8089788baff7c391bd834",
+      "txHash": "0x0f34575d3855fa2fc51c53c52f95b61588863924238500cd840c1d2c688373ca",
       "kind": "transparent"
     },
     {
       "address": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
-      "txHash": "0xca35a1c1405cbc008b9a7f761eb64e0cb833d0bd7ce21abb1f29a5578a75f874",
+      "txHash": "0x6cfa1a51d875b5ab4be79b6155de734c8fb70886ed0ffc5a9195a0f87c27fa4c",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "0a826f2824f88948fed120fe20aed9583c4c95579f4d932477fb48067fb21540": {
-      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "txHash": "0x22a63a2b5e3c15fdfda1ad4fa8099397528ac818a55d51a47eeef82ec45c3917",
-      "layout": {
-        "solcVersion": "0.8.7",
-        "storage": [
-          {
-            "label": "_initialized",
-            "offset": 0,
-            "slot": "0",
-            "type": "t_uint8",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
-            "retypedFrom": "bool"
-          },
-          {
-            "label": "_initializing",
-            "offset": 1,
-            "slot": "0",
-            "type": "t_bool",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "1",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "ContextUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
-          },
-          {
-            "label": "_paused",
-            "offset": 0,
-            "slot": "51",
-            "type": "t_bool",
-            "contract": "PausableUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "52",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "PausableUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
-          },
-          {
-            "label": "_owner",
-            "offset": 0,
-            "slot": "101",
-            "type": "t_address",
-            "contract": "OwnableUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "102",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "OwnableUpgradeable",
-            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
-          },
-          {
-            "label": "tokenAddress",
-            "offset": 0,
-            "slot": "151",
-            "type": "t_address",
-            "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:20"
-          },
-          {
-            "label": "USDAddress",
-            "offset": 0,
-            "slot": "152",
-            "type": "t_address",
-            "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:21"
-          },
-          {
-            "label": "fundWallet",
-            "offset": 0,
-            "slot": "153",
-            "type": "t_address",
-            "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:22"
-          },
-          {
-            "label": "token_usd",
-            "offset": 0,
-            "slot": "154",
-            "type": "t_contract(IERC20Upgradeable)1526",
-            "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:24"
-          },
-          {
-            "label": "token",
-            "offset": 0,
-            "slot": "155",
-            "type": "t_contract(LDG01)3766",
-            "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:25"
-          },
-          {
-            "label": "balance",
-            "offset": 0,
-            "slot": "156",
-            "type": "t_uint256",
-            "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:27"
-          },
-          {
-            "label": "usd_decimal",
-            "offset": 0,
-            "slot": "157",
-            "type": "t_uint8",
-            "contract": "ldgSwap",
-            "src": "contracts/defi-swap.sol:28"
-          }
-        ],
-        "types": {
-          "t_address": {
-            "label": "address",
-            "numberOfBytes": "20"
-          },
-          "t_array(t_uint256)49_storage": {
-            "label": "uint256[49]",
-            "numberOfBytes": "1568"
-          },
-          "t_array(t_uint256)50_storage": {
-            "label": "uint256[50]",
-            "numberOfBytes": "1600"
-          },
-          "t_bool": {
-            "label": "bool",
-            "numberOfBytes": "1"
-          },
-          "t_contract(IERC20Upgradeable)1526": {
-            "label": "contract IERC20Upgradeable",
-            "numberOfBytes": "20"
-          },
-          "t_contract(LDG01)3766": {
-            "label": "contract LDG01",
-            "numberOfBytes": "20"
-          },
-          "t_uint256": {
-            "label": "uint256",
-            "numberOfBytes": "32"
-          },
-          "t_uint8": {
-            "label": "uint8",
-            "numberOfBytes": "1"
-          }
-        }
-      }
-    },
-    "cd964f68250000689bab4e2e3c356d683ad31da59d225241e724c85e354760de": {
+    "cf0d95257e24868be516e4152184d5a0f225b0ab46ec5ff608da22920fe2b9cc": {
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0xb46f113b3e0fa411674467c76fba71a48c2190e28b98bb8ee1962c1afd02c04e",
+      "txHash": "0x88da0e0764741615a8a09468541c677cd752cade690b608ce33b9344b7754c25",
       "layout": {
         "solcVersion": "0.8.7",
         "storage": [
@@ -341,7 +185,7 @@
             "offset": 0,
             "slot": "351",
             "type": "t_uint32",
-            "contract": "LDG01",
+            "contract": "LUSDC",
             "src": "contracts/defi-token-upgradeable.sol:35"
           },
           {
@@ -349,7 +193,7 @@
             "offset": 0,
             "slot": "352",
             "type": "t_mapping(t_address,t_uint256)",
-            "contract": "LDG01",
+            "contract": "LUSDC",
             "src": "contracts/defi-token-upgradeable.sol:36"
           },
           {
@@ -357,7 +201,7 @@
             "offset": 0,
             "slot": "353",
             "type": "t_array(t_address)dyn_storage",
-            "contract": "LDG01",
+            "contract": "LUSDC",
             "src": "contracts/defi-token-upgradeable.sol:37"
           }
         ],
@@ -435,6 +279,162 @@
           "t_uint32": {
             "label": "uint32",
             "numberOfBytes": "4"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "59ed4e1db6dd75a3d39ff6a56ff24adf2a80301aacc8b1f9a81ece888f60094f": {
+      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "txHash": "0x8c257806f323598162ac8700cf3be5c091ef4e0a7006304f41f7750364a8116e",
+      "layout": {
+        "solcVersion": "0.8.7",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "tokenAddress",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "LUSDCSwap",
+            "src": "contracts/defi-swap.sol:20"
+          },
+          {
+            "label": "USDAddress",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_address",
+            "contract": "LUSDCSwap",
+            "src": "contracts/defi-swap.sol:21"
+          },
+          {
+            "label": "fundWallet",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_address",
+            "contract": "LUSDCSwap",
+            "src": "contracts/defi-swap.sol:22"
+          },
+          {
+            "label": "token_usd",
+            "offset": 0,
+            "slot": "154",
+            "type": "t_contract(IERC20Upgradeable)1526",
+            "contract": "LUSDCSwap",
+            "src": "contracts/defi-swap.sol:24"
+          },
+          {
+            "label": "token",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_contract(LUSDC)4591",
+            "contract": "LUSDCSwap",
+            "src": "contracts/defi-swap.sol:25"
+          },
+          {
+            "label": "balance",
+            "offset": 0,
+            "slot": "156",
+            "type": "t_uint256",
+            "contract": "LUSDCSwap",
+            "src": "contracts/defi-swap.sol:27"
+          },
+          {
+            "label": "usd_decimal",
+            "offset": 0,
+            "slot": "157",
+            "type": "t_uint8",
+            "contract": "LUSDCSwap",
+            "src": "contracts/defi-swap.sol:28"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20Upgradeable)1526": {
+            "label": "contract IERC20Upgradeable",
+            "numberOfBytes": "20"
+          },
+          "t_contract(LUSDC)4591": {
+            "label": "contract LUSDC",
+            "numberOfBytes": "20"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
           },
           "t_uint8": {
             "label": "uint8",

@@ -7,7 +7,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "./defi-token-upgradeable.sol";
 
-contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
+contract LUSDCSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
     /**
      * @dev Initialize the upgradeable smart contract
      **/
@@ -17,12 +17,12 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
         usd_decimal = 6;
     }
 
-    address tokenAddress; // LDG TOKEN ADDRESS
+    address tokenAddress; // LUSDC TOKEN ADDRESS
     address USDAddress; // USD ADDRESS
     address fundWallet; // Fund Wallet
 
     IERC20Upgradeable token_usd; // USD TOKEN
-    LDG01 token; // LDG TOKEN
+    LUSDC token; // LUSDC TOKEN
 
     uint256 balance; // USD balance
     uint8 public usd_decimal; // Decimal of USD Token
@@ -32,7 +32,7 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
         require(USDAddress != address(0x0), "USD Token address cannot be 0x0.");
         require(
             tokenAddress != address(0x0),
-            "Token LDG address cannot be 0x0."
+            "Token LUSDC address cannot be 0x0."
         );
         require(
             fundWallet != address(0x0),
@@ -60,8 +60,8 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
      **/
 
     function setToken(address _token) external onlyOwner {
-        // SET LDG TOKEN
-        token = LDG01(_token);
+        // SET LUSDC TOKEN
+        token = LUSDC(_token);
         tokenAddress = address(_token);
     }
 
@@ -82,18 +82,18 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
     }
 
     /**
-     * @dev It will give you the amount of USD token for amount of LTY token
-     * @param amount of LTY token
+     * @dev It will give you the amount of USD token for amount of LUSDC token
+     * @param amount of LUSDC token
      **/
     function getAmountUSD(uint256 amount) public view returns (uint256) {
         return amount / (10 ** (18 - usd_decimal));
     }
 
     /**
-     * @dev It will give you the amount of LTY token for amount of USD token
+     * @dev It will give you the amount of LUSDC token for amount of USD token
      * @param amount of USD token
      **/
-    function getAmountLTY(uint256 amount) public view returns (uint256) {
+    function getAmountLUSDC(uint256 amount) public view returns (uint256) {
         return amount * (10 ** (18 - usd_decimal));
     }
 
@@ -102,7 +102,7 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
      **/
 
     /**
-     * @dev It will give you equivalent amount of LTY Token for 1 USD / 1 LTY01
+     * @dev It will give you equivalent amount of LUSDC Token for 1 USD = 1 LUSDC
      * @param amount of usd you want to deposit
      **/
     function deposit(uint256 amount) external isTokenSet whenNotPaused {
@@ -115,16 +115,16 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
             "The contract has not allowed enough USD Token on the contract to spend it"
         );
 
-        uint256 amountLTY = getAmountLTY(amount); // Amout LTY bought with the USD of the user
+        uint256 amountLUSDC = getAmountLUSDC(amount); // Amout LUSDC bought with the USD of the user
         bool res = token_usd.transferFrom(msg.sender, fundWallet, amount); // transfer all the USD in the fund Wallet
         require(res, "The Transfer has been failed, please try again.");
 
-        token.mint(msg.sender, amountLTY); // Token LDG minted and gived to the users
+        token.mint(msg.sender, amountLUSDC); // Token lusdc minted and gived to the users
     }
 
     /**
-     * @dev It will give you equivalent amount of USDC for 1 LTY01 / 1 USD
-     * @param amount of lty token you want to withdraw
+     * @dev It will give you equivalent amount of USDC for 1 lusdc / 1 USD
+     * @param amount of LUSDC token you want to withdraw
      **/
     function withdraw(uint256 amount) external isTokenSet whenNotPaused {
         require(
@@ -136,7 +136,7 @@ contract ldgSwap is Initializable, PausableUpgradeable, OwnableUpgradeable {
             "You haven't allowed enough token to withdraw."
         );
 
-        uint256 amountUSD = getAmountUSD(amount); // Amout LTY bought with the USD of the user
+        uint256 amountUSD = getAmountUSD(amount); // Amout LUSDC bought with the USD of the user
         require(
             token_usd.allowance(fundWallet, address(this)) >= amountUSD,
             "The fund wallet hasn't allowed enough token to withdraw."

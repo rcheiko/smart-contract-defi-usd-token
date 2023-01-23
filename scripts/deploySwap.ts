@@ -3,7 +3,7 @@ import { ethers, upgrades } from "hardhat"
 // const PROXY = "0x111";
 
 async function main() {
-  const defiSwap = await ethers.getContractFactory("ldgSwap")
+  const defiSwap = await ethers.getContractFactory("LUSDCSwap")
   const swapDeployed = await upgrades.deployProxy(defiSwap, {
     initializer: "initialize"
   })

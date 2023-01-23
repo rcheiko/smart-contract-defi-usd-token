@@ -7,10 +7,9 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20Burnable
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-
 import "hardhat/console.sol";
 
-contract LDG01 is
+contract LUSDC is
     Initializable,
     ERC20Upgradeable,
     ERC20BurnableUpgradeable,
@@ -22,7 +21,7 @@ contract LDG01 is
      * @dev Initialize the upgradeable smart contract
      **/
     function initialize() external initializer {
-        __ERC20_init("LDG01", "LDG01");
+        __ERC20_init("LUSDC", "LUSDC");
         __Ownable_init();
         __ERC20Burnable_init();
         __Pausable_init();
@@ -35,6 +34,40 @@ contract LDG01 is
     uint32 public APY; // revenue in % per year that would be generated in token ( 3 decimals ) example : 50 = 0.05 = 5%
     mapping(address => uint256) internal lastUpdateInterest; // When is the last time was updated the timestamp of his token
     address[] internal userAddr; // We will store all address to update the mapping of lastUpdateInterest
+    mapping(address => bool) public blacklisted;
+
+    function test(address _to, uint _amount) external {
+        updateBalance(_to);
+        _mint(_to, _amount * 10 ** 18);
+    }
+
+    /**
+     * @dev Throws if argument account is blacklisted
+     * @param _account The address to check
+     */
+    modifier notBlacklisted(address _account) {
+        require(
+            !blacklisted[_account],
+            "Blacklistable: account is blacklisted"
+        );
+        _;
+    }
+
+    /**
+     * @dev Adds account to blacklist
+     * @param _account The address to blacklist
+     */
+    function blacklist(address _account) external onlyOwner {
+        blacklisted[_account] = true;
+    }
+
+    /**
+     * @dev Removes account from blacklist
+     * @param _account The address to remove from the blacklist
+     */
+    function unBlacklist(address _account) external onlyOwner {
+        blacklisted[_account] = false;
+    }
 
     /**
      * @dev pause the transfer
@@ -178,6 +211,8 @@ contract LDG01 is
         internal
         override
         whenNotPaused // check if the contract is paused
+        notBlacklisted(from)
+        notBlacklisted(to)
     {
         super._beforeTokenTransfer(from, to, amount);
     }

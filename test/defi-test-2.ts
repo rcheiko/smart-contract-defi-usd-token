@@ -16,7 +16,7 @@ describe("Test 2", function () {
     await this.usdDeployed.deployed();
     console.log("usdDeployed: " + this.usdDeployed.address + "\n");
 
-    this.defiToken = await ethers.getContractFactory("LDG01");
+    this.defiToken = await ethers.getContractFactory("LUSDC");
     this.tokenDeployed = await upgrades.deployProxy(this.defiToken, {
       initializer: "initialize",
     });
@@ -24,7 +24,7 @@ describe("Test 2", function () {
     await this.tokenDeployed.deployed();
     console.log("tokenDeployed: " + this.tokenDeployed.address + "\n");
 
-    this.defiSwap = await ethers.getContractFactory("ldgSwap");
+    this.defiSwap = await ethers.getContractFactory("LUSDCSwap");
     this.swapDeployed = await upgrades.deployProxy(this.defiSwap, {
       initializer: "initialize",
     });
@@ -87,7 +87,7 @@ describe("Test 2", function () {
   it("Should wait 1 year and try to transfer the balanceOf", async function () {
     await time.increase(60 * 60 * 24 * 365); // 1 year
 
-    let balanceLTYTestWallet = await this.tokenDeployed.balanceOf(
+    let balanceLUSDCTestWallet = await this.tokenDeployed.balanceOf(
       this.testWallet.address
     );
 
@@ -95,22 +95,22 @@ describe("Test 2", function () {
       .connect(this.testWallet)
       .transfer(this.owner.address, BigInt(1.05 * this.decimals_token));
 
-    balanceLTYTestWallet = await this.tokenDeployed.balanceOf(
+    balanceLUSDCTestWallet = await this.tokenDeployed.balanceOf(
       this.testWallet.address
     );
-    expect(JSON.parse(balanceLTYTestWallet)).to.below(
+    expect(JSON.parse(balanceLUSDCTestWallet)).to.below(
       0.01 * this.decimals_token
     );
 
-    const balanceLTYOwnerWallet = await this.tokenDeployed.balanceOf(
+    const balanceLUSDCOwnerWallet = await this.tokenDeployed.balanceOf(
       this.owner.address
     );
-    expect(JSON.parse(balanceLTYOwnerWallet)).to.equal(
+    expect(JSON.parse(balanceLUSDCOwnerWallet)).to.equal(
       1.05 * this.decimals_token
     );
   });
 
-  it("Should try to mint LTY Token directly and get reverted", async function () {
+  it("Should try to mint LUSDC Token directly and get reverted", async function () {
     await expect(
       this.tokenDeployed
         .connect(this.testWallet)
@@ -123,10 +123,10 @@ describe("Test 2", function () {
 
     await this.tokenDeployed.connect(this.owner).setAPY(45);
 
-    const balanceLTYOwnerWallet = await this.tokenDeployed.principalBalanceOf(
+    const balanceLUSDCOwnerWallet = await this.tokenDeployed.principalBalanceOf(
       this.owner.address
     );
-    expect(JSON.parse(balanceLTYOwnerWallet))
+    expect(JSON.parse(balanceLUSDCOwnerWallet))
       .to.above(1.1 * this.decimals_token)
       .to.below(1.103 * this.decimals_token);
   });
