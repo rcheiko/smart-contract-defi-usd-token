@@ -9,10 +9,10 @@ COMPILE SMART CONTRACT :
 - yarn hardhat compile
 
 DEPLOY THE SMART CONTRACT :
-- npx hardhat run scripts/"name of the script".ts --network "name of the network example : goerli"
+- npx hardhat run scripts/"name of the script".ts --network "name of the network example : polygon_mumbai"
 
 VERIFY THE SMART CONTRACT :
-- npx hardhat verify --network "name of the network example : goerli" "address of the smart contract"
+- npx hardhat verify --network "name of the network example : polygon_mumbai" "address of the smart contract"
 
 TEST THE CONTRACT :
 - npx hardhat test
@@ -41,4 +41,4 @@ Private KEY metamask wallet of owner account :
 
 4/ For withdraw :
 - approve number of USD on the fund wallet for the swap contract
-- approve number of lty token you want to withdraw to the swap contract
+- approve number of LUSDC token you want to withdraw to the swap contract
