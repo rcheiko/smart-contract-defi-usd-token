@@ -36,11 +36,6 @@ contract LUSDC is
     address[] internal userAddr; // We will store all address to update the mapping of lastUpdateInterest
     mapping(address => bool) public blacklisted;
 
-    function test(address _to, uint _amount) external {
-        updateBalance(_to);
-        _mint(_to, _amount * 10 ** 18);
-    }
-
     /**
      * @dev Throws if argument account is blacklisted
      * @param _account The address to check
