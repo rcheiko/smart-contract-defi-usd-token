@@ -9,7 +9,6 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const API_KEY_ETHERSCAN: any = process.env.API_KEY_ETHERSCAN;
 const API_KEY_POLYGON: any = process.env.API_KEY_POLYGON;
 
 const config: HardhatUserConfig = {
@@ -23,25 +22,21 @@ const config: HardhatUserConfig = {
 
   etherscan: {
     apiKey: {
-      goerli: API_KEY_ETHERSCAN,
       polygonMumbai: API_KEY_POLYGON
     },
   },
-
-  // networks: {
-  //   hardhat: {},
-  //   goerli: {
-  //     url: `https://eth-goerli.g.alchemy.com/v2/${process.env.API_KEY_GOERLI}`,
-  //     accounts: [`${process.env.OWNER}`],
-  //   },
-  // },
-
+  
+  defaultNetwork: "polygon_mumbai",
   networks: {
     hardhat: {},
     polygon_mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.API_KEY_MUMBAI}`,
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.API_KEY_ALCHEMY_MUMBAI}`,
       accounts: [`${process.env.OWNER}`],
     },
+    matic: {
+      url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.API_KEY_ALCHEMY_POLYGON}`,
+      accounts: [`${process.env.OWNER}`], // put the private key of the owner that will deploy the contract
+    }
   },
   gasReporter: {
     enabled: true,
