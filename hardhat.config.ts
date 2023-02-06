@@ -9,7 +9,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const API_KEY_POLYGON: any = process.env.API_KEY_POLYGON;
+const API_KEY_POLYGON: string = process.env.API_KEY_POLYGON ?? "";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.7",
@@ -22,18 +22,19 @@ const config: HardhatUserConfig = {
 
   etherscan: {
     apiKey: {
-      polygonMumbai: API_KEY_POLYGON
+      // polygonMumbai: API_KEY_POLYGON,
+      polygon: API_KEY_POLYGON,
     },
   },
   
-  defaultNetwork: "polygon_mumbai",
+  defaultNetwork: "polygon",
   networks: {
     hardhat: {},
-    polygon_mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.API_KEY_ALCHEMY_MUMBAI}`,
-      accounts: [`${process.env.OWNER}`],
-    },
-    matic: {
+    // polygon_mumbai: {
+    //   url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.API_KEY_ALCHEMY_MUMBAI}`,
+    //   accounts: [`${process.env.OWNER}`],
+    // },
+    polygon: {
       url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.API_KEY_ALCHEMY_POLYGON}`,
       accounts: [`${process.env.OWNER}`], // put the private key of the owner that will deploy the contract
     }
